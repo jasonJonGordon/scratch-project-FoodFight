@@ -28,7 +28,7 @@ class Platform2 extends React.Component {
 
   newVote = ((event, food) => {
     event.preventDefault();
-    this.emit("vote", food);
+    this.emit("vote", [food, this.refs.user.value]);
   })
 
   updateCount = ((choice) => {
