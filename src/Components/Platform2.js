@@ -23,7 +23,7 @@ class Platform2 extends React.Component {
 
   vote = ((event) => {
     event.preventDefault();
-    this.emit("vote", this.refs.foodtype.value);
+    this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
   })
 
   newVote = ((event, food) => {
@@ -50,9 +50,13 @@ class Platform2 extends React.Component {
     return (
       <div>
         <form onSubmit={this.vote}>
-          Enter Food:
-          <input type="text" ref="foodtype"/>
-          <input type="button" value="Submit"/>
+          <fieldset>
+            User:
+            <input type="text" ref="user"/>
+            Enter Food:
+            <input type="text" ref="foodtype"/>
+            <input type="submit" value="Submit" />
+          </fieldset>
         </form>
         {newFoodList}
       </div>
@@ -61,6 +65,9 @@ class Platform2 extends React.Component {
 }
 
 const styles = {
+  body: {
+    margin: 50
+  },
   block: {
     maxWidth: 250
   },

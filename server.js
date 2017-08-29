@@ -69,4 +69,3 @@ console.log('connected to server');
   // let japaneseCounter = 0;
   // let mexicanCounter = 0;
   // let italianCounter = 0;
-  
