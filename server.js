@@ -19,7 +19,7 @@ let voters = [];
 io.sockets.on('connect', function (socket) {
     //pushes new users into our user collection (aka socket connections)
     users.push(socket);
-    console.log(users);
+    //console.log(users);
     //console logs how many users (sockets) are connected to our server
     console.log('Connected: %s users', users.length);
     //listens for disconnect event (when user leaves); fires only once
