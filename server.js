@@ -28,6 +28,8 @@ io.on('connection', (socket) => {
       if (!count[choice].length) delete count[choice];
     }
     delete votes[socket.id];
+    //console.log('disconnectCount: ', count);
+    //console.log('disconnectVotes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.disconnect();
@@ -45,8 +47,8 @@ io.on('connection', (socket) => {
     votes[id] = choice;
     if (count[choice]) count[choice].push(id);
     else (count[choice]) = [id];
-    // console.log('count: ', count);
-    // console.log('votes: ', votes);
+    //console.log('count: ', count);
+    //console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
@@ -69,4 +71,3 @@ console.log('connected to server');
   // let japaneseCounter = 0;
   // let mexicanCounter = 0;
   // let italianCounter = 0;
-  

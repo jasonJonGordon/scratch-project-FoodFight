@@ -29,6 +29,7 @@ class Platform2 extends React.Component {
 
   vote = ((event) => {
     event.preventDefault();
+    console.log(this.refs.foodtype.value)
     this.emit("vote", this.refs.foodtype.value);
   })
 
