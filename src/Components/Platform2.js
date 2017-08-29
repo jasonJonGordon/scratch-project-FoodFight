@@ -29,6 +29,7 @@ class Platform2 extends React.Component {
       this.socket = io('http://localhost:3000');
       this.socket.on('connected', this.connected)
       this.socket.on('welcome', this.updateState)
+      this.socket.on('updateCount', this.updateCount)
       this.socket.on('onChinese', this.onChinese);
       this.socket.on('onReturnYesChinese', this.onReturnYesChinese);
       this.socket.on('voteCountUpdateChinese', this.voteCountUpdateChinese);
@@ -54,6 +55,10 @@ class Platform2 extends React.Component {
   updateState = ((serverState) => {
       this.setState(serverState);
   })
+
+  updateCount = ((count) => {
+    console.log(count);
+  });
 
   connected = ((data) => {
       this.setState({ name: data.name });
