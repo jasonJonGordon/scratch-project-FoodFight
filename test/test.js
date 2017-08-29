@@ -1,21 +1,67 @@
 var should = require('should');
+var expect = require('chai').expect;  
 var io = require('socket.io-client'),
     server = require('../server');
 
 
 
-var socketURL = 'http://localhost:5000';
+var socketURL = 'http://localhost:3000';
 
 var options ={
   transports: ['websocket'],
   'force new connection': true
 };
 
-var chatUser1 = {'name':'Tom'};
-var chatUser2 = {'name':'Sally'};
-var chatUser3 = {'name':'Dana'};
+// var chatUser1 = {'name':'Tom'};
+// var chatUser2 = {'name':'Sally'};
+// var chatUser3 = {'name':'Dana'};
   
-describe("Chat Server",function(){
+describe("Food Fight",function(){
+
+  /*Can Connect to Socket*/
+  it('can connect to socket', function (done) {
+    var io = require('socket.io-client');
+    var options = {
+      transports: ['websocket'],
+      'force new connection': true,
+      path: '/socket.io-client'
+      };
+    var client = io('http://localhost:3000/');
+    client.once('connect', function () {
+      console.log('connected')
+      done();
+    })
+  })
+
+
+/*Can Vote*/
+
+it('can vote', function (done) {
+  //set up client connection
+  var client = io.connect(socketURL, options);
+
+    //Setup event listener. This is the test
+    client.on('vote', function(vote){
+      console.log('WTF!!!!!', vote)
+      expect(vote).to.equal('chinese')
+
+      //Disconnect client connection
+      client.disconnect();
+      done()
+    })
+
+client.on('connect', function(){
+  client.emit('vote', 'chinese')
+    
+  console.log('hello')
+  console.log('wTF', count.chinese)
+
+})
+
+})
+
+
+
 
   /* Test 1 - A Single User */
   it('Should broadcast new user once they connect',function(done){

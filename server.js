@@ -51,8 +51,8 @@ io.on('connection', (socket) => {
     else (count[choice]) = [id];
     console.log('count: ', count);
     console.log('votes: ', votes);
-    // socket.emit('updateCount', count);
-    // socket.broadcast.emit('updateCount', count);
+    socket.emit('updateCount', count);
+    socket.broadcast.emit('updateCount', count);
   });
 
   socket.on('yesChinese', (data) => {
