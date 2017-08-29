@@ -5,7 +5,7 @@ const app = express();
 const server = app.listen(3000);
 const io = require('socket.io').listen(server);
 
-app.use(express.static(__dirname + '/www'));
+app.use(express.static(`${__dirname}/www`));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // stores connections, votes and voters
@@ -15,8 +15,9 @@ const users = [];
 
 // listens for connect event when users join socket
 io.on('connection', (socket) => {
-  // pushes new users into our user collection (aka socket connections)
+  // Add user to user list
   users.push(socket.id);
+  // console.log(users);
   console.log('Connected: %s users', users.length);
 
   // remove disconnected socket from user & cancel votes
@@ -37,6 +38,7 @@ io.on('connection', (socket) => {
   // add or change vote and emit
   socket.on('vote', (choice) => {
     const id = socket.id;
+    const name = 'anonymous';
     if (Object.keys(votes).includes(id)) {
       const target = Object.keys(count).filter(vote => count[vote].includes(id))[0];
       count[target].splice(count[target].indexOf(id), 1);
@@ -51,7 +53,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
   });
-
 });
 
 console.log('connected to server');
