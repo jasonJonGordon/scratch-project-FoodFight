@@ -21,6 +21,7 @@ class Platform extends React.Component {
             count4Japanese: 0,
             count4Mexican: 0,
             count4Italian: 0,
+            globalCount: {}
         }
         this.connected = this.connected.bind(this);
         this.emit = this.emit.bind(this);
@@ -37,9 +38,12 @@ class Platform extends React.Component {
         this.onItalian = this.onItalian.bind(this);
         this.onReturnYesItalian = this.onReturnYesItalian.bind(this);
         this.voteCountUpdateItalian = this.voteCountUpdateItalian.bind(this);
+        this.vote = this.vote.bind(this);
+        this.updateCount = this.updateCount.bind(this);
     }
     componentWillMount() {
         this.socket = io('http://localhost:3000');
+        this.socket.on('updateCount', this.updateCount);
         this.socket.on('connected', this.connected)
         this.socket.on('welcome', this.updateState)
         this.socket.on('onChinese', this.onChinese);
@@ -57,6 +61,14 @@ class Platform extends React.Component {
     }
     emit(event, data) {
         this.socket.emit(event, data);
+    }
+    vote() {
+      this.emit('vote', 'mexican');
+    }
+    updateCount(data) {
+      if (this.state.globalCount)
+      this.setState({ globalCount: data });
+      console.log('updateCount running: ', this.state.globalCount);
     }
     updateState(serverState) {
         this.setState(serverState);
@@ -121,7 +133,7 @@ class Platform extends React.Component {
                                         checkedIcon={<ActionFavorite style={{ color: '#F44336' }} />}
                                         uncheckedIcon={<ActionFavoriteBorder />}
                                         style={styles.radioButton}
-                                        onClick={this.onMexican}
+                                        onClick={this.vote}
                                     /> 
 
                                     <RadioButton
@@ -155,7 +167,7 @@ class Platform extends React.Component {
 
                 <div className="col-lg-6">
                     <h1 className="cover-heading">Results</h1>
-                    <p className="lead">{this.state.count4Mexican} Votes for Mexican Food </p>
+                    <p className="lead">{this.state.globalCount.mexican || 0} Votes for Mexican Food </p>
                     <p className="lead">{this.state.count4Japanese} Votes for Japanese Food </p>
                     <p className="lead">{this.state.count4Chinese} Votes for Chinese Food </p>
                     <p className="lead">{this.state.count4Italian} Votes for Italian Food</p>
