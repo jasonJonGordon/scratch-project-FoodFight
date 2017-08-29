@@ -49,10 +49,11 @@ io.on('connection', (socket) => {
 
     if (count[choice]) count[choice].push(id);
     else (count[choice]) = [id];
-    console.log('count: ', count);
-    console.log('votes: ', votes);
-    // socket.emit('updateCount', count);
-    // socket.broadcast.emit('updateCount', count);
+    // console.log('count: ', count);
+    // console.log('votes: ', votes);
+    socket.emit('updateCount', count);
+    socket.broadcast.emit('updateCount', count);
+    socket.broadcast.emit('newVote', count);
   });
 
   socket.on('yesChinese', (data) => {

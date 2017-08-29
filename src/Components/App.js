@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import {render} from 'react-dom';
 import io from 'socket.io-client';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -7,29 +7,22 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import Platform2 from './Platform2.js';
 
-
-
-
-
 class App extends React.Component {
 
-    render() {
+  render() {
 
-        return (
-            <div>
-                <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+    return (
+      <div>
+        <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
 
-                      {/* <Test /> */}
+          {/* <Test /> */}
 
+          <Platform2/>
+        </MuiThemeProvider>
 
-                     <Platform2 />
-                </MuiThemeProvider>
-
-
-            </div>
-        )
-    }
+      </div>
+    )
+  }
 }
-
 
 export default App;
