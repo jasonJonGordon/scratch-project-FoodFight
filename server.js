@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
       count[choice] = count[choice].filter(vote => vote.id !== id);
       if (!count[choice].length) delete count[choice];
     }
+
     delete votes[id];
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
@@ -56,9 +57,10 @@ io.on('connection', (socket) => {
     else (count[choice]) = [{ id, name }];
 
     votes[id] = choice;
-
-    console.log('count: ', count);
-    console.log('votes: ', votes);
+    if (count[choice]) count[choice].push(id);
+    else (count[choice]) = [id];
+    //console.log('count: ', count);
+    //console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
