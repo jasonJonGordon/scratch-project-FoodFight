@@ -13,10 +13,11 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /.jsx?/,
         loader: "babel-loader", //make sure u look at PLURAL loader and loaders
         query: {
-          presets: ["es2015", "react"]
+          presets: ["es2015", "react"],
+          plugins: ["transform-class-properties"]
         },
       },
       {

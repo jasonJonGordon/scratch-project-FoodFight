@@ -4,6 +4,10 @@ const path = require('path');
 const bodyParser = require('body-parser');
 app.use(express.static(__dirname + '/www'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+})
 const server = app.listen(3000);
 const io = require('socket.io').listen(server);
 //users array stores our user socket connections
@@ -31,7 +35,7 @@ io.sockets.on('connect', function (socket) {
         //console logs how many sockets remain connected
         console.log('Disconnected: %s users remaining', users.length);
     });//ends socket.once.disconnect
-    // //broadcasts to new user connection 
+    // //broadcasts to new user connection
     // socket.emit('connected', {
     // });//ends socket.emit.welcome
     socket.emit('welcome', {
