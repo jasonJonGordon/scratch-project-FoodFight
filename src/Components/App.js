@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import Platform from './Platform.js';
+import Platform2 from './Platform2.js';
 
 
 
@@ -18,13 +18,13 @@ class App extends React.Component {
         return (
             <div>
                 <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
-                  
-                      {/* <Test /> */}
-              
 
-                     <Platform /> 
+                      {/* <Test /> */}
+
+
+                     <Platform2 />
                 </MuiThemeProvider>
-               
+
 
             </div>
         )
