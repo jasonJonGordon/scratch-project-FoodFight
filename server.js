@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // stores connections, votes and voters
 const votes = {};
 const count = {};
-const users = [];
+let users = [];
 
 // listens for connect event when users join socket
 io.on('connection', (socket) => {
@@ -22,33 +22,43 @@ io.on('connection', (socket) => {
 
   // remove disconnected socket from user & cancel votes
   socket.on('disconnect', () => {
-    users.splice(users.indexOf(socket), 1);
-    const choice = votes[socket.id];
+    const id = socket.id;
+    const choice = votes[id];
+    users = users.filter(user => user !== id);
     if (count[choice]) {
-      count[choice].splice(count[choice].indexOf(socket.id), 1);
+      count[choice] = count[choice].filter(vote => vote.id !== id);
       if (!count[choice].length) delete count[choice];
     }
-    delete votes[socket.id];
+    delete votes[id];
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.disconnect();
     console.log('Disconnected: %s users remaining', users.length);
+    console.log('votes: ', votes);
+    console.log('users: ', users);
+    console.log('count: ', count);
   });
 
   // add or change vote and emit
-  socket.on('vote', (choice) => {
+  socket.on('vote', (data) => {
     const id = socket.id;
-    const name = 'anonymous';
+    const choice = data[0];
+    const name = data[1] || 'anonymous';
+
     if (Object.keys(votes).includes(id)) {
-      const target = Object.keys(count).filter(vote => count[vote].includes(id))[0];
-      count[target].splice(count[target].indexOf(id), 1);
-      if (!count[target].length) delete count[target];
+      const target = count[votes[id]].filter(voter => voter.id === id)[0];
+      count[votes[id]].splice(count[votes[id]].indexOf(target), 1)
+      if (!count[votes[id]].length) delete count[votes[id]];
+      delete votes[id];
     }
+
+    if (count[choice]) count[choice].push({ id, name });
+    else (count[choice]) = [{ id, name }];
+
     votes[id] = choice;
-    if (count[choice]) count[choice].push(id);
-    else (count[choice]) = [id];
-    // console.log('count: ', count);
-    // console.log('votes: ', votes);
+
+    console.log('count: ', count);
+    console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
