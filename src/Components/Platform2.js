@@ -1,10 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
 import io from 'socket.io-client';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import ActionFavorite from 'material-ui/svg-icons/action/favorite';
-import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
-import {Jumbotron} from 'react-bootstrap';
 import FoodList from './food_list';
 
 class Platform2 extends React.Component {
@@ -17,8 +13,6 @@ class Platform2 extends React.Component {
 
   componentWillMount() {
     this.socket = io('http://localhost:3000');
-    this.socket.on('connected', this.connected);
-    this.socket.on('welcome', this.updateState);
     this.socket.on('updateCount', this.updateCount);
     this.socket.on('newVote', this.newVote);
   }
@@ -29,16 +23,12 @@ class Platform2 extends React.Component {
 
   vote = ((event) => {
     event.preventDefault();
-    this.emit("vote", this.refs.foodtype.value);
+    this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
   })
 
   newVote = ((event, food) => {
     event.preventDefault();
     this.emit("vote", food);
-  })
-
-  updateState = ((serverState) => {
-    this.setState(serverState);
   })
 
   updateCount = ((choice) => {
@@ -48,14 +38,10 @@ class Platform2 extends React.Component {
       options.votes = choice[food].length;
       options.voters = choice[food];
       return options;
-    })
-
+    });
     this.setState({options: state});
   })
 
-  connected = ((data) => {
-    this.setState({name: data.name});
-  })
 
   render() {
     const newFoodList = this.state.options.map((foodtype, i) =>
@@ -64,9 +50,13 @@ class Platform2 extends React.Component {
     return (
       <div>
         <form onSubmit={this.vote}>
-          Enter Food:
-          <input type="text" ref="foodtype"/>
-          <input type="button" value="Submit"/>
+          <fieldset>
+            User:
+            <input type="text" ref="user"/>
+            Enter Food:
+            <input type="text" ref="foodtype"/>
+            <input type="submit" value="Submit" />
+          </fieldset>
         </form>
         {newFoodList}
       </div>
@@ -75,6 +65,9 @@ class Platform2 extends React.Component {
 }
 
 const styles = {
+  body: {
+    margin: 50
+  },
   block: {
     maxWidth: 250
   },
@@ -89,3 +82,8 @@ const styles = {
 };
 
 export default Platform2;
+
+// import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+// import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+// import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+// import {Jumbotron} from 'react-bootstrap';
