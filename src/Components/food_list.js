@@ -1,17 +1,14 @@
 import React from 'react';
 
 class FoodList extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
 
   passer = (event) => {
-    this.props.vote(this.props.foodtype, this.props.totalVotes);
+    this.props.newVote(event, this.props.foodtype);
   }
 
   render() {
-    return(
-    <li onClick={this.passer} className="list-group-item">{this.props.foodtype}</li>
+    return (
+      <li onClick={this.passer} className="list-group-item">{this.props.foodtype} Total Votes: {this.props.totalVotes}</li>
     );
   }
 
