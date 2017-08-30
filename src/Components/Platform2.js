@@ -17,6 +17,7 @@ class Platform2 extends React.Component {
     this.socket = io('http://localhost:3000');
     this.socket.on('updateCount', this.updateCount);
     this.socket.on('newVote', this.newVote);
+    this.socket.on('updateYelp', this.updateYelp)
   }
 
   emit = ((event, data) => {
@@ -27,6 +28,7 @@ class Platform2 extends React.Component {
     event.preventDefault();
     console.log(this.refs.foodtype.value)
     this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
+    this.refs.foodtype.value = "";
   })
 
   newVote = ((event, food) => {
@@ -42,13 +44,18 @@ class Platform2 extends React.Component {
       options.voters = choice[food];
       return options;
     });
+    state.sort((a, b) => b.votes - a.votes);
     this.setState({options: state});
   })
 
+  updateYelp = ((yelp) => {
+    this.setState({ yelp });
+    console.log(this.state)
+  })
 
   render() {
-    const newFoodList = this.state.options.map((foodtype, i) =>
-    <FoodList foodtype={foodtype.name} totalVotes={foodtype.votes} voters={foodtype.voters} position={i} newVote={this.newVote}/>)
+    const newFoodList = this.state.options.map((foodtype) =>
+    <FoodList foodtype={foodtype.name} username={foodtype.voters[0].name} totalVotes={foodtype.votes} voters={foodtype.voters} newVote={this.newVote}/>)
 
     return (
       <div>
@@ -62,32 +69,13 @@ class Platform2 extends React.Component {
             <input type="submit" value="Submit" />
           </fieldset>
         </form>
+        <div>
         {newFoodList}
+      </div>
       </div>
     )
   }
 }
 
-const styles = {
-  body: {
-    margin: 50
-  },
-  block: {
-    maxWidth: 250
-  },
-  radioButton: {
-    marginBottom: 16
-  },
-  contain: {
-    wrapMargin: '30',
-    padding: '50',
-    backgroundImage: "url('http://www.nmgncp.com/data/out/124/4634171-food-wallpaper-background.jpg')"
-  }
-};
 
 export default Platform2;
-
-// import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-// import ActionFavorite from 'material-ui/svg-icons/action/favorite';
-// import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
-// import {Jumbotron} from 'react-bootstrap';

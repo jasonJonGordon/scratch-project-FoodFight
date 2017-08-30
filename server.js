@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const yelpController = require('./util/yelpController');
 
 const app = express();
 const server = app.listen(3000);
@@ -8,11 +9,16 @@ const io = require('socket.io').listen(server);
 app.use(express.static(`${__dirname}/www`));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// stores connections, votes and voters
 const votes = {};
 const count = {};
 let users = [];
-
+function getRank() {
+  return Object.keys(count).sort((a, b) => {
+    if (count[b].length > count[a].length) return 1;
+    if (count[b].length < count[a].length) return -1;
+    return 0;
+  });
+}
 // listens for connect event when users join socket
 io.on('connection', (socket) => {
   // Add user to user list
@@ -34,13 +40,9 @@ io.on('connection', (socket) => {
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.disconnect();
-    // console.log('Disconnected: %s users remaining', users.length);
-    // console.log('votes: ', votes);
-    // console.log('users: ', users);
-    // console.log('count: ', count);
+    console.log('Disconnected: %s users remaining', users.length);
   });
 
-  // add or change vote and emit
   socket.on('vote', (data) => {
     const id = socket.id;
     const choice = data[0];
@@ -48,7 +50,7 @@ io.on('connection', (socket) => {
 
     if (Object.keys(votes).includes(id)) {
       const target = count[votes[id]].filter(voter => voter.id === id)[0];
-      count[votes[id]].splice(count[votes[id]].indexOf(target), 1)
+      count[votes[id]].splice(count[votes[id]].indexOf(target), 1);
       if (!count[votes[id]].length) delete count[votes[id]];
       delete votes[id];
     }
@@ -57,9 +59,14 @@ io.on('connection', (socket) => {
     else (count[choice]) = [{ id, name }];
 
     votes[id] = choice;
-   
-    // console.log('count: ', count);
-    // console.log('votes: ', votes);
+    const topChoice = getRank()[0];
+    yelpController.getData(topChoice)
+      .then((yelp) => {
+        socket.emit('updateYelp', yelp);
+        socket.broadcast.emit('updateYelp', yelp);
+      });
+    console.log('count: ', count);
+    console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
