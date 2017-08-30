@@ -55,13 +55,13 @@ class Platform2 extends React.Component {
 
   updateYelp = ((yelp) => {
     this.setState({ yelp });
-    // console.log(this.state.yelp);
+    console.log(this.state.yelp);
   })
 
   render() {
     const newFoodList = this.state.options.map((foodtype) =>
 
-     <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes}/>)
+      <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes} />)
 
     const newLocations = <Thumbnails name={this.state.yelp.name} src={this.state.yelp.image_url} url={this.state.yelp.url} phone={this.state.yelp.phone} location={this.state.yelp.location} />
 
@@ -75,7 +75,7 @@ class Platform2 extends React.Component {
               getCurrentPosition }) =>
               <div>
                 <button onClick={getCurrentPosition}>Get Position</button>
-                <button onClick={() => {this.setState({latitude: latitude, longitude: longitude})}}>Save Position</button>
+                <button onClick={() => { this.setState({ latitude: latitude, longitude: longitude }) }}>Save Position</button>
                 {error &&
                   <div>
                     {error.message}
@@ -88,10 +88,6 @@ class Platform2 extends React.Component {
                 </pre>
               </div>}
         />
-
-   
-   
-      <div>
 
         <form onSubmit={this.vote}>
           <fieldset>
