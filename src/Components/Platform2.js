@@ -28,11 +28,8 @@ class Platform2 extends React.Component {
 
   vote = ((event) => {
     event.preventDefault();
-
-    console.log(this.refs.foodtype.value)
-    console.log(this.state.latitude)
-    console.log(this.state.longitude)
-    this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
+    console.log(this.state.latitude);
+    this.emit("vote", [this.refs.foodtype.value, this.refs.user.value, [this.state.latitude, this.state.longitude]]);
     this.refs.foodtype.value = "";
   })
 
@@ -55,7 +52,7 @@ class Platform2 extends React.Component {
 
   updateYelp = ((yelp) => {
     this.setState({ yelp });
-    console.log(this.state.yelp);
+    // console.log(this.state.yelp);
   })
 
   render() {
