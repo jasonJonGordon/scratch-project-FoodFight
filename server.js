@@ -54,6 +54,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('vote', (data) => {
+    console.log(data);
     const id = socket.id;
     const choice = data[0];
     const name = data[1] || 'anonymous';
@@ -86,8 +87,8 @@ io.on('connection', (socket) => {
       socket.emit('updateYelp', currentYelp);
       socket.broadcast.emit('updateYelp', currentYelp);
     }
-    console.log('count: ', count);
-    console.log('votes: ', votes);
+    // console.log('count: ', count);
+    // console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
