@@ -1,15 +1,17 @@
 import React from 'react';
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 import io from 'socket.io-client';
 import FoodList from './food_list';
-import {geolocated} from 'react-geolocated';
-import Demo from './demo';
+import { geolocated } from 'react-geolocated';
+import Geolocation from 'react-geolocation'
 
 class Platform2 extends React.Component {
   constructor() {
     super();
     this.state = {
-      options: []
+      options: [],
+      logitude: null,
+      latitude: null
     }
   }
 
@@ -27,6 +29,8 @@ class Platform2 extends React.Component {
   vote = ((event) => {
     event.preventDefault();
     console.log(this.refs.foodtype.value)
+    console.log(this.state.latitude)
+    console.log(this.state.longitude)
     this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
     this.refs.foodtype.value = "";
   })
@@ -45,7 +49,7 @@ class Platform2 extends React.Component {
       return options;
     });
     state.sort((a, b) => b.votes - a.votes);
-    this.setState({options: state});
+    this.setState({ options: state });
   })
 
   updateYelp = ((yelp) => {
@@ -55,23 +59,45 @@ class Platform2 extends React.Component {
 
   render() {
     const newFoodList = this.state.options.map((foodtype) =>
-    <FoodList foodtype={foodtype.name} username={foodtype.voters[0].name} totalVotes={foodtype.votes} voters={foodtype.voters} newVote={this.newVote}/>)
+      <FoodList foodtype={foodtype.name} username={foodtype.voters[0].name} totalVotes={foodtype.votes} voters={foodtype.voters} newVote={this.newVote} />)
 
     return (
       <div>
-        <Demo />
+        <Geolocation
+          render={
+            ({ fetchingPosition,
+              position: { coords: { latitude, longitude } = {} } = {},
+              error,
+              getCurrentPosition }) =>
+              <div>
+                <button onClick={getCurrentPosition}>Get Position</button>
+                <button onClick={() => {this.setState({latitude: latitude, longitude: longitude})}}>Save Position</button>
+                {error &&
+                  <div>
+                    {error.message}
+                  </div>}
+                <pre>
+                  <h1>{this.state.latitude}</h1>
+                  <h1>{this.state.longitude}</h1>
+                  latitude: {latitude}
+                  longitude: {longitude}
+                </pre>
+              </div>}
+        />
         <form onSubmit={this.vote}>
           <fieldset>
             User:
-            <input type="text" ref="user"/>
+            <input type="text" ref="user" />
             Enter Food:
-            <input type="text" ref="foodtype"/>
+            <input type="text" ref="foodtype" />
             <input type="submit" value="Submit" />
           </fieldset>
         </form>
         <div>
-        {newFoodList}
-      </div>
+          {newFoodList}
+          <h1>{this.state.latitude}</h1>
+          <h1>{this.state.longitude}</h1>
+        </div>
       </div>
     )
   }
