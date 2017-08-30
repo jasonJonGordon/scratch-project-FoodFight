@@ -65,8 +65,8 @@ io.on('connection', (socket) => {
         socket.emit('updateYelp', yelp);
         socket.broadcast.emit('updateYelp', yelp);
       });
-    console.log('count: ', count);
-    console.log('votes: ', votes);
+    // console.log('count: ', count);
+    // console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
