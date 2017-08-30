@@ -1,17 +1,17 @@
 import React from 'react';
 import { render } from 'react-dom';
 import io from 'socket.io-client';
-import FoodList from './food_list';
-import { geolocated } from 'react-geolocated';
 import Geolocation from 'react-geolocation'
+import Thumbnails from './Thumbnails';
+import Buttons from './Buttons';
+import { Grid, ButtonToolbar, ToggleButtonGroup, ToggleButton, ButtonGroup, Button } from 'react-bootstrap';
 
 class Platform2 extends React.Component {
   constructor() {
     super();
     this.state = {
       options: [],
-      logitude: null,
-      latitude: null
+      yelp: {},
     }
   }
 
@@ -19,7 +19,7 @@ class Platform2 extends React.Component {
     this.socket = io('http://localhost:3000');
     this.socket.on('updateCount', this.updateCount);
     this.socket.on('newVote', this.newVote);
-    this.socket.on('updateYelp', this.updateYelp)
+    this.socket.on('updateYelp', this.updateYelp);
   }
 
   emit = ((event, data) => {
@@ -28,6 +28,7 @@ class Platform2 extends React.Component {
 
   vote = ((event) => {
     event.preventDefault();
+
     console.log(this.refs.foodtype.value)
     console.log(this.state.latitude)
     console.log(this.state.longitude)
@@ -54,12 +55,15 @@ class Platform2 extends React.Component {
 
   updateYelp = ((yelp) => {
     this.setState({ yelp });
-    console.log(this.state)
+    // console.log(this.state.yelp);
   })
 
   render() {
     const newFoodList = this.state.options.map((foodtype) =>
-      <FoodList foodtype={foodtype.name} username={foodtype.voters[0].name} totalVotes={foodtype.votes} voters={foodtype.voters} newVote={this.newVote} />)
+
+     <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes}/>)
+
+    const newLocations = <Thumbnails name={this.state.yelp.name} src={this.state.yelp.image_url} url={this.state.yelp.url} phone={this.state.yelp.phone} location={this.state.yelp.location} />
 
     return (
       <div>
@@ -84,6 +88,11 @@ class Platform2 extends React.Component {
                 </pre>
               </div>}
         />
+
+   
+   
+      <div>
+
         <form onSubmit={this.vote}>
           <fieldset>
             User:
@@ -94,10 +103,13 @@ class Platform2 extends React.Component {
           </fieldset>
         </form>
         <div>
-          {newFoodList}
-          <h1>{this.state.latitude}</h1>
-          <h1>{this.state.longitude}</h1>
+          <ButtonGroup>
+            {newFoodList}
+          </ButtonGroup>
         </div>
+        <Grid>
+          {newLocations}
+        </Grid>
       </div>
     )
   }
