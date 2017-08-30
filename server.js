@@ -59,7 +59,6 @@ io.on('connection', (socket) => {
     else (count[choice]) = [{ id, name }];
 
     votes[id] = choice;
-
     const topChoice = getRank()[0];
     yelpController.getData(topChoice)
       .then((yelp) => {

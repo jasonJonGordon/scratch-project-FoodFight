@@ -43,7 +43,8 @@ describe("Food Fight", function () {
 
     //Setup event listener. This is the test
     client.on('updateCount', function (count) {
-      //console.log('updateCount', count)
+      // console.log('updateCount', count)
+      //console.log(Object.keys(count)[0])
       expect(Object.keys(count)[0]).to.equal('japanese')
 
       //Disconnect client connection
@@ -52,7 +53,7 @@ describe("Food Fight", function () {
     })
 
     client.on('connect', function () {
-      client.emit('vote', 'japanese')
+      client.emit('vote', ['japanese', 'Gordon'])
 
     })
 
@@ -82,7 +83,7 @@ describe("Food Fight", function () {
 
       client2.on('connect', function () {
 
-        client2.emit('vote', 'mexican');
+        client2.emit('vote', ['mexican', 'Gordon']);
 
       })
 
@@ -99,6 +100,7 @@ describe("Food Fight", function () {
 
     //Setup event listener. This is the test
     client1.on('updateCount', function (count) {
+      //console.log(Object.keys(count).length === 1)
       expect(Object.keys(count).length === 1)
       expect(Object.keys(count)[0]).to.equal('japanese')
 
@@ -121,7 +123,7 @@ describe("Food Fight", function () {
 
       })
 
-      client1.emit('vote', 'japanese')
+      client1.emit('vote', ['japanese', 'Gordon'])
 
     })
 
@@ -136,14 +138,16 @@ describe("Food Fight", function () {
     //Setup event listener. This is the test
 
     client1.on('updateCount', function (count) { 
+      setTimeout(function(){
       console.log('updateCount', count)
       expect(Object.keys(count)[0]).to.equal('hot dogs')
 
       //Disconnect both client connections
-     
+
         client1.disconnect();
         client2.disconnect();
         done();
+      }, 25)
     })
 
 
@@ -154,9 +158,14 @@ describe("Food Fight", function () {
       client2 = io.connect(socketURL, options);
 
       client2.on('connect', function () {
-        client2.emit('vote', 'hamburger');
-        client2.emit('vote', 'hot dogs');
+        client2.emit('vote', ['hamburger','Gordon']);
       })
+
+      client2.on('vote', function () {
+        console.log('hello')
+        client2.emit('vote', ['hot dogs','Gordon']);
+      })
+
 
     })
 
