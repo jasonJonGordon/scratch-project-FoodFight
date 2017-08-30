@@ -8,11 +8,11 @@ const io = require('socket.io').listen(server);
 app.use(express.static(`${__dirname}/www`));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// stores connections, votes and voters
 const votes = {};
 const count = {};
 let users = [];
-
+let topChoices = [];
+function getTopChoices() {}
 // listens for connect event when users join socket
 io.on('connection', (socket) => {
   // Add user to user list
@@ -35,12 +35,8 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('updateCount', count);
     socket.disconnect();
     console.log('Disconnected: %s users remaining', users.length);
-    console.log('votes: ', votes);
-    console.log('users: ', users);
-    console.log('count: ', count);
   });
 
-  // add or change vote and emit
   socket.on('vote', (data) => {
     const id = socket.id;
     const choice = data[0];
@@ -48,7 +44,7 @@ io.on('connection', (socket) => {
 
     if (Object.keys(votes).includes(id)) {
       const target = count[votes[id]].filter(voter => voter.id === id)[0];
-      count[votes[id]].splice(count[votes[id]].indexOf(target), 1)
+      count[votes[id]].splice(count[votes[id]].indexOf(target), 1);
       if (!count[votes[id]].length) delete count[votes[id]];
       delete votes[id];
     }
@@ -57,10 +53,8 @@ io.on('connection', (socket) => {
     else (count[choice]) = [{ id, name }];
 
     votes[id] = choice;
-    if (count[choice]) count[choice].push(id);
-    else (count[choice]) = [id];
-    //console.log('count: ', count);
-    //console.log('votes: ', votes);
+    console.log('count: ', count);
+    console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
