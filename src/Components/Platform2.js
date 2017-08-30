@@ -15,6 +15,7 @@ class Platform2 extends React.Component {
     this.socket = io('http://localhost:3000');
     this.socket.on('updateCount', this.updateCount);
     this.socket.on('newVote', this.newVote);
+    this.socket.on('updateYelp', this.updateYelp)
   }
 
   emit = ((event, data) => {
@@ -23,6 +24,7 @@ class Platform2 extends React.Component {
 
   vote = ((event) => {
     event.preventDefault();
+    console.log(this.refs.foodtype.value)
     this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
     this.refs.foodtype.value = "";
   })
@@ -44,6 +46,10 @@ class Platform2 extends React.Component {
     this.setState({options: state});
   })
 
+  updateYelp = ((yelp) => {
+    this.setState({ yelp });
+    console.log(this.state)
+  })
 
   render() {
     const newFoodList = this.state.options.map((foodtype) =>

@@ -1,13 +1,13 @@
 var should = require('should');
-var expect = require('chai').expect;  
+var expect = require('chai').expect;
 var io = require('socket.io-client'),
-    server = require('../server');
+  server = require('../server');
 
 
 
 var socketURL = 'http://localhost:3000';
 
-var options ={
+var options = {
   transports: ['websocket'],
   'force new connection': true
 };
@@ -15,8 +15,8 @@ var options ={
 // var chatUser1 = {'name':'Tom'};
 // var chatUser2 = {'name':'Sally'};
 // var chatUser3 = {'name':'Dana'};
-  
-describe("Food Fight",function(){
+
+describe("Food Fight", function () {
 
   /*Can Connect to Socket*/
   it('can connect to socket', function (done) {
@@ -25,177 +25,141 @@ describe("Food Fight",function(){
       transports: ['websocket'],
       'force new connection': true,
       path: '/socket.io-client'
-      };
+    };
     var client = io('http://localhost:3000/');
     client.once('connect', function () {
       console.log('connected')
+      client.disconnect();
       done();
     })
   })
 
 
-/*Can Vote*/
+  /*Can Vote*/
 
-it('can vote', function (done) {
-  //set up client connection
-  var client = io.connect(socketURL, options);
+  it('should be able to vote', function (done) {
+    //set up client connection
+    var client = io.connect(socketURL, options);
 
     //Setup event listener. This is the test
-    client.on('vote', function(vote){
-      console.log('WTF!!!!!', vote)
-      expect(vote).to.equal('chinese')
+    client.on('updateCount', function (count) {
+      //console.log('updateCount', count)
+      expect(Object.keys(count)[0]).to.equal('japanese')
 
       //Disconnect client connection
       client.disconnect();
-      done()
+      done();
     })
 
-client.on('connect', function(){
-  client.emit('vote', 'chinese')
-    
-  console.log('hello')
-  console.log('wTF', count.chinese)
+    client.on('connect', function () {
+      client.emit('vote', 'japanese')
 
-})
+    })
 
-})
+  })
 
-
-
-
-  /* Test 1 - A Single User */
-  it('Should broadcast new user once they connect',function(done){
-    var client = io.connect(socketURL, options);
-
-    client.on('connect',function(data){
-      client.emit('connection name',chatUser1);
-    });
-
-    client.on('new user',function(usersName){
-      usersName.should.be.type('string');
-      usersName.should.equal(chatUser1.name + " has joined.");
-      /* If this client doesn't disconnect it will interfere 
-      with the next test */
-      client.disconnect();
-      done(); 
-    });
-  });
-
-  /* Test 2 - Two Users */
-  it('Should broadcast new user to all users', function(done){
+  /* Can receive vote */
+  it('should be able to receive vote', function (done) {
+    //set up client1 connection
     var client1 = io.connect(socketURL, options);
 
-    client1.on('connect', function(data){
-      client1.emit('connection name', chatUser1);
+    //Setup event listener. This is the test
+    client1.on('updateCount', function (count) {
+      // console.log('updateCount', count)
+      expect(Object.keys(count)[0]).to.equal('mexican')
 
-      /* Since first client is connected, we connect
-      the second client. */
-      var client2 = io.connect(socketURL, options);
-
-      client2.on('connect', function(data){
-        client2.emit('connection name', chatUser2);
-      });
-
-      client2.on('new user', function(usersName){
-        usersName.should.equal(chatUser2.name + " has joined.");
-        client2.disconnect();
-      });
-
-    });
-
-    var numUsers = 0;
-    client1.on('new user', function(usersName){
-      numUsers += 1;
-
-      if(numUsers === 2){
-        usersName.should.equal(chatUser2.name + " has joined.");
-        client1.disconnect();
-        done();
-      }
-    });
-  });
-
-  /* Test 3 - User sends a message to chat room. */
-  it('Should be able to broadcast messages', function(done){
-    var client1, client2, client3;
-    var message = 'Hello World';
-    var messages = 0;
-
-    var checkMessage = function(client){
-      client.on('message', function(msg){
-        message.should.equal(msg);
-        client.disconnect();
-        messages++;
-        if(messages === 3){
-          done();
-        };
-      });
-    };
-
-    client1 = io.connect(socketURL, options);
-    checkMessage(client1);
-
-    client1.on('connect', function(data){
-      client2 = io.connect(socketURL, options);
-      checkMessage(client2);
-
-      client2.on('connect', function(data){
-        client3 = io.connect(socketURL, options);
-        checkMessage(client3);
-
-        client3.on('connect', function(data){
-          client2.send(message);
-        });
-      });
-    });
-  });
-
-  /* Test 4 - User sends a private message to another user. */
-  it('Should be able to send private messages', function(done){
-    var client1, client2, client3;
-    var message = {to: chatUser1.name, txt:'Private Hello World'};
-    var messages = 0;
-
-    var completeTest = function(){
-      messages.should.equal(1);
+      //Disconnect both client connections
       client1.disconnect();
       client2.disconnect();
-      client3.disconnect();
       done();
-    };
+    })
 
-    var checkPrivateMessage = function(client){
-      client.on('private message', function(msg){
-        message.txt.should.equal(msg.txt);
-        msg.from.should.equal(chatUser3.name);
-        messages++;
-        if(client === client1){
-          /* The first client has received the message
-          we give some time to ensure that the others
-          will not receive the same message. */
-          setTimeout(completeTest, 40);
-        };
-      });
-    };
+    client1.on('connect', function () {
+      //client1.emit('vote', 'japanese')
 
-    client1 = io.connect(socketURL, options);
-    checkPrivateMessage(client1);
-
-    client1.on('connect', function(data){
-      client1.emit('connection name', chatUser1);
+      //Setup client2 connection
       client2 = io.connect(socketURL, options);
-      checkPrivateMessage(client2);
 
-      client2.on('connect', function(data){
-        client2.emit('connection name', chatUser2);
-        client3 = io.connect(socketURL, options);
-        checkPrivateMessage(client3);
+      client2.on('connect', function () {
 
-        client3.on('connect', function(data){
-          client3.emit('connection name', chatUser3);
-          client3.emit('private message', message)
-        });
-      });
-    });
-  });
+        client2.emit('vote', 'mexican');
+
+      })
+
+    })
+
+  })
+
+
+  /* Vote removed on disconnect */
+  it('Vote removed on disconnect', function (done) {
+    //set up client1 connection
+    var client1 = io.connect(socketURL, options);
+
+
+    //Setup event listener. This is the test
+    client1.on('updateCount', function (count) {
+      expect(Object.keys(count).length === 1)
+      expect(Object.keys(count)[0]).to.equal('japanese')
+
+      //Disconnect both client connections
+      client1.disconnect();
+
+      done();
+    })
+
+    client1.on('connect', function () {
+      //client1.emit('vote', 'japanese')
+
+      //Setup client2 connection
+      client2 = io.connect(socketURL, options);
+
+      client2.on('connect', function () {
+
+        client2.emit('vote', 'mexican');
+        client2.disconnect();
+
+      })
+
+      client1.emit('vote', 'japanese')
+
+    })
+
+  })
+
+
+  /* Can only vote once */
+  it('Can only vote once', function (done) {
+    //set up client1 connection
+    var client1 = io.connect(socketURL, options);
+
+    //Setup event listener. This is the test
+
+    client1.on('updateCount', function (count) { 
+      console.log('updateCount', count)
+      expect(Object.keys(count)[0]).to.equal('hot dogs')
+
+      //Disconnect both client connections
+     
+        client1.disconnect();
+        client2.disconnect();
+        done();
+    })
+
+
+    client1.on('connect', function () {
+     // client1.emit('vote', 'indonesian')
+
+      //Setup client2 connection
+      client2 = io.connect(socketURL, options);
+
+      client2.on('connect', function () {
+        client2.emit('vote', 'hamburger');
+        client2.emit('vote', 'hot dogs');
+      })
+
+    })
+
+  })
+
 });
