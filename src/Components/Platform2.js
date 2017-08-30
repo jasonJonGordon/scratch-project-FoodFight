@@ -12,6 +12,7 @@ class Platform2 extends React.Component {
     this.state = {
       options: [],
       yelp: {},
+      position: "Please save position when coordinates load"
     }
   }
 
@@ -71,17 +72,15 @@ class Platform2 extends React.Component {
               error,
               getCurrentPosition }) =>
               <div>
-                <button onClick={getCurrentPosition}>Get Position</button>
-                <button onClick={() => { this.setState({ latitude: latitude, longitude: longitude }) }}>Save Position</button>
+                <button onClick={() => { getCurrentPosition(); this.setState({ latitude: latitude, longitude: longitude, position: "Position saved" }) }}>Save Position</button>
                 {error &&
                   <div>
                     {error.message}
                   </div>}
                 <pre>
-                  <h1>{this.state.latitude}</h1>
-                  <h1>{this.state.longitude}</h1>
-                  latitude: {latitude}
-                  longitude: {longitude}
+                  <p>{this.state.position}</p>
+                  <p>latitude: {latitude}</p>
+                  <p>longitude: {longitude}</p>
                 </pre>
               </div>}
         />
