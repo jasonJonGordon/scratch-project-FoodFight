@@ -59,7 +59,7 @@ class Platform2 extends React.Component {
 
   render() {
     const newFoodList = this.state.options.map((foodtype) =>
-    <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes}></Buttons>)
+    <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes}/>)
 
     const newLocations = <Thumbnails name={this.state.yelp.name} src={this.state.yelp.image_url} url={this.state.yelp.url} phone={this.state.yelp.phone} location={this.state.yelp.location} />
 
@@ -76,13 +76,13 @@ class Platform2 extends React.Component {
           </fieldset>
         </form>
         <div>
-          <ButtonGroup vertical block>
+          <ButtonGroup>
             {newFoodList}
           </ButtonGroup>
         </div>
-          <Grid>
-            {newLocations}
-          </Grid>
+        <Grid>
+          {newLocations}
+        </Grid>
       </div>
     )
   }
