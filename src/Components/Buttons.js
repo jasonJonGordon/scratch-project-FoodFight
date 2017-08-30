@@ -12,7 +12,7 @@ class Buttons extends Component {
     const totalVotersList = this.props.voters.map((voters) => <VotersList name={voters.name} />)
     return (
       <div>
-        <Button onClick={this.passer}>{this.props.foodtype} Total Votes: {this.props.totalVotes} {totalVotersList}</Button>
+        <Button onClick={this.passer}>{this.props.foodtype} Total Votes: {this.props.totalVotes} <ul>{totalVotersList}</ul></Button>
       </div>
     )
   }

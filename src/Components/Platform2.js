@@ -1,8 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
 import io from 'socket.io-client';
-import {geolocated} from 'react-geolocated';
-import Demo from './demo';
 import Thumbnails from './Thumbnails';
 import Buttons from './Buttons';
 import { Grid, ButtonToolbar, ToggleButtonGroup, ToggleButton, ButtonGroup, Button } from 'react-bootstrap';
@@ -36,7 +34,6 @@ class Platform2 extends React.Component {
 
   newVote = ((event, food) => {
     event.preventDefault();
-    console.log("HELLO");
     this.emit("vote", [food, this.refs.user.value]);
   })
 
@@ -65,7 +62,6 @@ class Platform2 extends React.Component {
 
     return (
       <div>
-        <Demo />
         <form onSubmit={this.vote}>
           <fieldset>
             User:
