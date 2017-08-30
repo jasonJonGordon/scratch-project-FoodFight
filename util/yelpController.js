@@ -11,8 +11,16 @@ const yelpController = {
         Authorization: `Bearer ${token}`,
       },
     };
-    rp(options)
-      .then((data => console.log(data)));
+    return rp(options).then((yelpApi) => {
+      const topBiz = JSON.parse(yelpApi).businesses[0];
+      const yelp = {
+        name: topBiz.name,
+        image_url: topBiz.image_url,
+        location: topBiz.location.display_address,
+        phone: topBiz.phone,
+      };
+      return Promise.resolve(yelp);
+    });
   },
 
 };

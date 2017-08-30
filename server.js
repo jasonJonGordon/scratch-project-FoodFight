@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const yelpController = require('./util/yelpController');
 
 const app = express();
 const server = app.listen(3000);
@@ -11,8 +12,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const votes = {};
 const count = {};
 let users = [];
-let topChoices = [];
-function getTopChoices() {}
+function getRank() {
+  return Object.keys(count).sort((a, b) => {
+    if (count[b].length > count[a].length) return 1;
+    if (count[b].length < count[a].length) return -1;
+    return 0;
+  });
+}
 // listens for connect event when users join socket
 io.on('connection', (socket) => {
   // Add user to user list
@@ -53,6 +59,12 @@ io.on('connection', (socket) => {
     else (count[choice]) = [{ id, name }];
 
     votes[id] = choice;
+    const topChoice = getRank()[0];
+    yelpController.getData(topChoice)
+      .then((yelp) => {
+        socket.emit('updateYelp', yelp);
+        socket.broadcast.emit('updateYelp', yelp);
+      });
     console.log('count: ', count);
     console.log('votes: ', votes);
     socket.emit('updateCount', count);
