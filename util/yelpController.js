@@ -18,6 +18,7 @@ const yelpController = {
         image_url: topBiz.image_url,
         location: topBiz.location.display_address,
         phone: topBiz.phone,
+        url: topBiz.url,
       };
       return Promise.resolve(yelp);
     });
