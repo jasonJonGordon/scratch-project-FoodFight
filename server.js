@@ -46,10 +46,11 @@ io.on('connection', (socket) => {
       }
       votes = votes.filter(keepVote => keepVote.id !== id);
       if (vote.coords) {
-        allCoords = allCoords.filter(coords => coords[0] !== vote.coords[0]);
+        allCoords = allCoords.filter(coords => coords.lat !== vote.coords[0]);
       }
     }
     console.log('count after disconnect: ', count);
+    console.log('coords after disconnect: ', allCoords);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.disconnect();
@@ -57,13 +58,13 @@ io.on('connection', (socket) => {
   });
 
   socket.on('vote', (data) => {
-    console.log(data);
+    console.log('data sent on vote: ', data);
     const id = socket.id;
     const choice = data[0];
     const name = data[1] || 'anonymous';
     const coords = data[2];
     // add new coords to list
-    allCoords.push(coords);
+    
     // check if voter has already voted
     const existingVote = votes.filter(vote => vote.id === id)[0];
     if (existingVote) {
@@ -72,7 +73,7 @@ io.on('connection', (socket) => {
       count[existingVote.choice].splice(count[existingVote.choice].indexOf(target), 1);
       if (!count[existingVote.choice].length) delete count[existingVote.choice];
       votes = votes.filter(vote => vote.id !== id);
-    }
+    } else allCoords.push({ lat: coords[0], lng: coords[1] });
     // add new vote to count
     if (count[choice]) count[choice].push({ id, name });
     else (count[choice]) = [{ id, name }];
