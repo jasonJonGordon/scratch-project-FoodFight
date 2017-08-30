@@ -21,12 +21,14 @@ function getRank() {
 }
 // listens for connect event when users join socket
 io.on('connection', (socket) => {
+  socket.emit('updateCount', count);
   // Add user to user list
   users.push(socket.id);
   // console.log(users);
   console.log('Connected: %s users', users.length);
 
   // remove disconnected socket from user & cancel votes
+
   socket.on('disconnect', () => {
     const id = socket.id;
     const choice = votes[id];
