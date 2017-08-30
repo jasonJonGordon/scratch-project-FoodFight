@@ -37,14 +37,17 @@ io.on('connection', (socket) => {
     const id = socket.id;
     users = users.filter(user => user !== id);
     const vote = votes ? votes.filter(thisVote => thisVote.id === id)[0] : null;
+    console.log('vote after disconnect: ', vote)
     if (vote) {
       const choice = vote.choice;
       if (count[choice]) {
         count[choice] = count[choice].filter(countVote => countVote.id !== id);
         if (!count[choice].length) delete count[choice];
       }
-      votes = votes.filter(vote => vote.id !== id);
-      // allCoords = allCoords.filter(coords => coords[0] !== vote.coords);
+      votes = votes.filter(keepVote => keepVote.id !== id);
+      if (vote.coords) {
+        allCoords = allCoords.filter(coords => coords[0] !== vote.coords[0]);
+      }
     }
     console.log('count after disconnect: ', count);
     socket.emit('updateCount', count);
@@ -59,25 +62,29 @@ io.on('connection', (socket) => {
     const choice = data[0];
     const name = data[1] || 'anonymous';
     const coords = data[2];
+    // add new coords to list
     allCoords.push(coords);
+    // check if voter has already voted
     const existingVote = votes.filter(vote => vote.id === id)[0];
     if (existingVote) {
+      // remove vote from count and votes
       const target = count[existingVote.choice].filter(voter => voter.id === id)[0]
       count[existingVote.choice].splice(count[existingVote.choice].indexOf(target), 1);
       if (!count[existingVote.choice].length) delete count[existingVote.choice];
       votes = votes.filter(vote => vote.id !== id);
     }
-
+    // add new vote to count
     if (count[choice]) count[choice].push({ id, name });
     else (count[choice]) = [{ id, name }];
 
+    // add new vote to votes
     votes.push({ id, choice, coords });
 
     const update = getRank()[0];
     if (update !== topChoice) {
       topChoice = update;
       yelpController
-        .getData(topChoice)
+        .getData(topChoice, allCoords)
         .then((yelp) => {
           currentYelp = yelp;
           socket.emit('updateYelp', yelp);
