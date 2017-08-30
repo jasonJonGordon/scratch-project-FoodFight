@@ -34,9 +34,9 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('updateCount', count);
     socket.disconnect();
     console.log('Disconnected: %s users remaining', users.length);
-    console.log('votes: ', votes);
-    console.log('users: ', users);
-    console.log('count: ', count);
+    // console.log('votes: ', votes);
+    // console.log('users: ', users);
+    // console.log('count: ', count);
   });
 
   // add or change vote and emit
@@ -57,8 +57,8 @@ io.on('connection', (socket) => {
 
     votes[id] = choice;
 
-    console.log('count: ', count);
-    console.log('votes: ', votes);
+    // console.log('count: ', count);
+    // console.log('votes: ', votes);
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
