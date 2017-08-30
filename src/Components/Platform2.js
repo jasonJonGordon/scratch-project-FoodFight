@@ -1,6 +1,7 @@
 import React from 'react';
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 import io from 'socket.io-client';
+import Geolocation from 'react-geolocation'
 import Thumbnails from './Thumbnails';
 import Buttons from './Buttons';
 import { Grid, ButtonToolbar, ToggleButtonGroup, ToggleButton, ButtonGroup, Button } from 'react-bootstrap';
@@ -28,6 +29,9 @@ class Platform2 extends React.Component {
   vote = ((event) => {
     event.preventDefault();
 
+    console.log(this.refs.foodtype.value)
+    console.log(this.state.latitude)
+    console.log(this.state.longitude)
     this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
     this.refs.foodtype.value = "";
   })
@@ -46,7 +50,7 @@ class Platform2 extends React.Component {
       return options;
     });
     state.sort((a, b) => b.votes - a.votes);
-    this.setState({options: state});
+    this.setState({ options: state });
   })
 
   updateYelp = ((yelp) => {
@@ -56,18 +60,45 @@ class Platform2 extends React.Component {
 
   render() {
     const newFoodList = this.state.options.map((foodtype) =>
-    <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes}/>)
+
+     <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes}/>)
 
     const newLocations = <Thumbnails name={this.state.yelp.name} src={this.state.yelp.image_url} url={this.state.yelp.url} phone={this.state.yelp.phone} location={this.state.yelp.location} />
 
     return (
       <div>
+        <Geolocation
+          render={
+            ({ fetchingPosition,
+              position: { coords: { latitude, longitude } = {} } = {},
+              error,
+              getCurrentPosition }) =>
+              <div>
+                <button onClick={getCurrentPosition}>Get Position</button>
+                <button onClick={() => {this.setState({latitude: latitude, longitude: longitude})}}>Save Position</button>
+                {error &&
+                  <div>
+                    {error.message}
+                  </div>}
+                <pre>
+                  <h1>{this.state.latitude}</h1>
+                  <h1>{this.state.longitude}</h1>
+                  latitude: {latitude}
+                  longitude: {longitude}
+                </pre>
+              </div>}
+        />
+
+   
+   
+      <div>
+
         <form onSubmit={this.vote}>
           <fieldset>
             User:
-            <input type="text" ref="user"/>
+            <input type="text" ref="user" />
             Enter Food:
-            <input type="text" ref="foodtype"/>
+            <input type="text" ref="foodtype" />
             <input type="submit" value="Submit" />
           </fieldset>
         </form>
