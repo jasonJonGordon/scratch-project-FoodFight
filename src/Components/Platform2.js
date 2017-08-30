@@ -2,6 +2,8 @@ import React from 'react';
 import {render} from 'react-dom';
 import io from 'socket.io-client';
 import FoodList from './food_list';
+import {geolocated} from 'react-geolocated';
+import Demo from './demo';
 
 class Platform2 extends React.Component {
   constructor() {
@@ -24,7 +26,6 @@ class Platform2 extends React.Component {
   vote = ((event) => {
     event.preventDefault();
     console.log(this.refs.foodtype.value)
-    this.emit("vote", this.refs.foodtype.value);
     this.emit("vote", [this.refs.foodtype.value, this.refs.user.value]);
   })
 
@@ -51,6 +52,7 @@ class Platform2 extends React.Component {
 
     return (
       <div>
+        <Demo />
         <form onSubmit={this.vote}>
           <fieldset>
             User:
