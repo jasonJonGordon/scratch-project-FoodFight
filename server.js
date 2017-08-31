@@ -49,6 +49,13 @@ io.on('connection', (socket) => {
         allCoords = allCoords.filter(coords => coords.lat !== vote.coords[0]);
       }
     }
+    yelpController
+      .getData(topChoice, allCoords)
+      .then((yelp) => {
+        currentYelp = yelp;
+        socket.emit('updateYelp', yelp);
+        socket.broadcast.emit('updateYelp', yelp);
+      });
     console.log('count after disconnect: ', count);
     console.log('coords after disconnect: ', allCoords);
     socket.emit('updateCount', count);
@@ -83,7 +90,7 @@ io.on('connection', (socket) => {
     console.log('allCoords: ', allCoords);
 
     const update = getRank()[0];
-    if (update !== topChoice || allCoords.length > votes.length) {
+    if (update !== topChoice || allCoords.length !== votes.length) {
       topChoice = update;
       yelpController
         .getData(topChoice, allCoords)
