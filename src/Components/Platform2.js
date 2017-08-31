@@ -53,12 +53,11 @@ class Platform2 extends React.Component {
 
   updateYelp = ((yelp) => {
     this.setState({ yelp });
-    // console.log(this.state.yelp);
   })
 
   render() {
+    console.log(this.state.yelp.location)
     const newFoodList = this.state.options.map((foodtype) =>
-
       <Buttons foodtype={foodtype.name} username={foodtype.voters[0].name} newVote={this.newVote} voters={foodtype.voters} totalVotes={foodtype.votes} />)
 
     const newLocations = <Thumbnails name={this.state.yelp.name} src={this.state.yelp.image_url} url={this.state.yelp.url} phone={this.state.yelp.phone} location={this.state.yelp.location} />
@@ -72,7 +71,6 @@ class Platform2 extends React.Component {
               error,
               getCurrentPosition }) =>
               <div>
-                <button onClick={() => { getCurrentPosition(); this.setState({ latitude: latitude, longitude: longitude, position: "Position saved" }) }}>Save Position</button>
                 {error &&
                   <div>
                     {error.message}
@@ -82,15 +80,16 @@ class Platform2 extends React.Component {
                   <p>latitude: {latitude}</p>
                   <p>longitude: {longitude}</p>
                 </pre>
+                <button onClick={() => { getCurrentPosition(); this.setState({ latitude: latitude, longitude: longitude, position: "Position saved" }) }}>Save Position</button>
               </div>}
         />
 
-        <form onSubmit={this.vote}>
+        <form id="userchoice" onSubmit={this.vote}>
           <fieldset>
             User:
-            <input type="text" ref="user" />
-            Enter Food:
-            <input type="text" ref="foodtype" />
+            <input type="text" ref="user" /><br></br>
+            Food:
+            <input type="text" ref="foodtype" /><br></br>
             <input type="submit" value="Submit" />
           </fieldset>
         </form>
@@ -99,7 +98,7 @@ class Platform2 extends React.Component {
             {newFoodList}
           </ButtonGroup>
         </div>
-        <Grid>
+        <Grid id="thumbnails">
           {newLocations}
         </Grid>
       </div>
