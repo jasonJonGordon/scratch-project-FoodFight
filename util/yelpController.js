@@ -5,10 +5,8 @@ const token = '6i0pYlDOl4BDG3lS0pIKSZu96vUhx0NpPyFH6EKDVDrqTc1PNHxQUBz8PlIpo6xyV
 const yelpController = {
 
   getData(term, coordsList) {
-    console.log('coordslist: ', coordsList);
     if (!coordsList.length) coordsList = [[33.9794389, -118.4224384], [34.0407, 118.2468]];
     const coords = coordsList.length === 1 ? [coordsList[0].lat, coordsList[0].lng] : midPoint(coordsList);
-    console.log('coords: ', coords);
     const options = {
       uri: `https://api.yelp.com/v3/businesses/search?term=${term}&latitude=${coords[0]}&longitude=${coords[1]}`,
       // uri: `https://api.yelp.com/v3/businesses/search?term=${term}&location=90292`,

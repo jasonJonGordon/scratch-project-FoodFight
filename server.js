@@ -73,16 +73,17 @@ io.on('connection', (socket) => {
       count[existingVote.choice].splice(count[existingVote.choice].indexOf(target), 1);
       if (!count[existingVote.choice].length) delete count[existingVote.choice];
       votes = votes.filter(vote => vote.id !== id);
+      // Only push to coords if they have not already voted
     } else allCoords.push({ lat: coords[0], lng: coords[1] });
     // add new vote to count
     if (count[choice]) count[choice].push({ id, name });
     else (count[choice]) = [{ id, name }];
 
-    // add new vote to votes
-    votes.push({ id, choice, coords });
+    console.log('votes: ', votes);
+    console.log('allCoords: ', allCoords);
 
     const update = getRank()[0];
-    if (update !== topChoice) {
+    if (update !== topChoice || allCoords.length > votes.length) {
       topChoice = update;
       yelpController
         .getData(topChoice, allCoords)
@@ -100,6 +101,8 @@ io.on('connection', (socket) => {
     socket.emit('updateCount', count);
     socket.broadcast.emit('updateCount', count);
     socket.broadcast.emit('newVote', count);
+    // add new vote to votes
+    votes.push({ id, choice, coords });
   });
 });
 
